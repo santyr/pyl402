@@ -18,15 +18,18 @@ class LNbitsWallet(Wallet):
         self.client = client if client else httpx.Client()
 
     def pay_invoice(self, invoice: str) -> PaymentResult:
-        url = f"{self.base_url}/api/v1/payments"  # Update the endpoint according to LNbits API for invoice payments
+        url = f"{self.base_url}/api/v1/payments"
         headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-Api-Key': self.credentials,  # LNbits uses an API key for authentication
-            'User-Agent': 'lnbits-python'
+            'X-Api-Key': self.credentials,
         }
+
         body = {
-            "invoice": invoice  # Include "amount" if necessary
+            "unit": "sat",
+            "internal": True,
+            "out": True,
+            "invoice": invoice
         }
 
         try:
@@ -34,8 +37,8 @@ class LNbitsWallet(Wallet):
             response.raise_for_status()  # Check for HTTP request errors
 
             lnbits_response = response.json()
-            return PaymentResult(preimage=lnbits_response.get('preimage', ''),
-                                 success=True)
+            return PaymentResult(preimage=lnbits_response.get('preimage', ''), success=True)
+        
         except httpx.HTTPStatusError as e:
             return PaymentResult(preimage='', success=False, error=f'HTTP error: {e.response.status_code} {e.response.reason_phrase}')
         except httpx.RequestError as e:
