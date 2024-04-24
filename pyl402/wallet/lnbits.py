@@ -18,7 +18,7 @@ class LNbitsWallet(Wallet):
         self.client = client if client else httpx.Client()
 
     def pay_invoice(self, invoice: str) -> PaymentResult:
-        url = f"{self.base_url}/lapi/v1/payments"  # Update the endpoint according to LNbits API for invoice payments
+        url = f"{self.base_url}/api/v1/payments"  # Update the endpoint according to LNbits API for invoice payments
         headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
